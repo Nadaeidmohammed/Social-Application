@@ -28,7 +28,9 @@ export const bootstrab=async(app,express)=>{
     app.use("/post",postRouter);
     app.use("/comment",commentRouter)
     app.use("/admin",adminRouter)
-
+    app.get("/",(req,res)=>{
+        return res.json({success:true})
+    })
     app.all("*",notFoundHandler)
     app.use(globalErrorHandler);
 }
