@@ -10,10 +10,10 @@ const commentSchema=new Schema({
             return this.image?.length ? false:true;
         },
     },
-    image:[{
+    image:{
         public_id:String,
         secure_url:String,
-    }],
+    },
     createdBy:{
         type:Types.ObjectId,
         ref:"User",

@@ -46,5 +46,21 @@ postSchema.virtual("comments",{
     foreignField:"postId",
     localField:"_id",
 });
+// postSchema.query.paginate=async function(page){
+//     const limit=5;
+//     const skip=limit*(page-1);
+//     const data=await this.skip(skip).limit(limit);
+//     const items=await this.model.countDocument()
+//     //data , totalItems , currentPage , totalPages , itemsPerPage
+//     return{
+//         data,
+//         totalItems:items,
+//         currentPage:Number(page),
+//         totalPages:Math.ceil(totalItems/limit),
+//         itemsPerPage:data.length,
+//         nextPage: page < totalPages ? Number(page) + 1 : null,
+//         previousPage: page > 1 ? Number(page) - 1 : null,
+//     }
+// }
 
 export const PostModel = mongoose.models.Post || model("Post",postSchema)

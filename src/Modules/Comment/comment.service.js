@@ -153,7 +153,6 @@ export const likeAndUnlikeComment=async(req,res,next)=>{
     });
     return res.status(200).json({success:true,data:{populatedUser}})
 }
-
 export const addReply=async(req,res,next)=>{
     const {commentId,postId}=req.params;
 
@@ -193,7 +192,6 @@ export const addReply=async(req,res,next)=>{
     })
     return res.status(201).json({success:true,data:{reply}})
 }
-
 export const hardDeleteComment=async(req,res,next)=>{
     const{commentId}=req.params;
 

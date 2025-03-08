@@ -2,8 +2,8 @@ import mongoose,{Schema,Types,model} from "mongoose";
 import { hash } from "../../utils/hashing/hash.js";
 
 export const roleType={
-User:"Admin",
-Admin:"User"
+User:"User",
+Admin:"Admin"
 }
 export const genderType={
  male:"male",
@@ -93,4 +93,17 @@ userSchema.pre("save",function(next){
     return next();
 })
 
+userSchema.pre("updateOne",{ document: true, query: false }, function (next) {
+    console.log("Middleware updateOne triggered");
+  const update = this.getUpdate();
+  console.log("Update object:", update);
+    if (update.password) {
+      update.password = hash({ plainText: update.password });
+    }
+    if (update.mobileNumber) {
+      update.mobileNumber = encrypt({ plainText: update.mobileNumber, signature: process.env.ENCRYPTION_SECRET });
+    }
+    next();
+  });
+  
 export const UserModel= mongoose.models.User || model("User",userSchema)

@@ -109,11 +109,6 @@ return  res.status(200).json({success:true,data:{}})
 }
 export const resetEmail=async(req,res,next)=>{
     const {oldCode,newCode}=req.body;
-console.log("📩 Checking values before comparing hash:");
-console.log("➡️ OTP from request:", oldCode,newCode);
-console.log("➡️ Stored Hash from DB:", req.user.tempEmailOTP,
-    req.user.confirmEmailOTO
-); // تأكد من أن tempEmailOTP موجودة
 
 if (!req.user.tempEmailOTP) {
     return next(new Error("OTP is missing or expired", { cause: 400 }));
@@ -137,18 +132,18 @@ if (typeof req.user.tempEmailOTP !== "string") {
   return  res.status(200).json({success:true,user})
 }
 export const updatePassword=async(req,res,next)=>{
-    const{oldPassword,Password}=req.body;
+    const{oldPassword,password}=req.body;
      
     if(!compareHash({plainText:oldPassword,hash:req.user.password}))
       return next(new Error("In_valid password",{cause:404}))
     
        const user =await dbService.updateOne({model:UserModel,
         filter:{_id:req.user._id},
-        data:{password:hash({plainText:Password}),changeCredentialsTime:Date.now()},
+        data:{password:password,changeCredentialsTime:Date.now() },
         options: { new: true, runValidators: true }
        })
        
-    
+       
     return res.status(200).json({ success: true, message: "Password updated successfully", user });
 }
 export const updateProfile=async(req,res,next)=>{

@@ -4,6 +4,7 @@ import { defaultImageOnCloud, defaultPublicIdOnCloud, roleType, UserModel } from
 import {PostModel} from "../../DB/Models/post.model.js"
 import { nanoid } from "nanoid";
 import { CommentModel } from "../../DB/Models/comment.model.js";
+import {paginate} from "../../utils/pagination/paginate.js"
 
 export const createPost=async(req,res,next)=>{
    const {content}=req.body;
@@ -132,50 +133,57 @@ export const getSinglePost=async(req,res,next)=>{
     // });
     return res.status(200).json({success:true,data:{post}})
 }
+// export const activePosts=async(req,res,next)=>{
+//     //1
+//     // let posts;
+//     // if(req.user.role===roleType.Admin)
+//     // {
+//     //     posts=await dbService.find({
+//     //         model:PostModel,
+//     //         filter:{isDeleted:false},
+//     //         populate:{path:"createdBy",select:"userName image -_id"}
+//     //     });
+//     // }
+//     // posts=await dbService.find({
+//     //     model:PostModel,
+//     //     filter:{isDeleted:false,createdBy:req.user._id},
+//     //     populate:{path:"createdBy",select:"userName image -_id"}
+//     // });
+//     //2
+//     // let posts;
+//     // posts=await dbService.find({
+//     //             model:PostModel,
+//     //             filter:{isDeleted:false},
+//     //             populate:{path:"createdBy",select:"userName image -_id"}
+//     //         });
+//     // let results=[];
+//     // for (const post of posts) {
+//     //     const comments=await dbService.find({
+//     //         model:CommentModel,
+//     //         filter:{postId:post._id,isDeleted:false},
+//     //         select:"image text -_id"
+//     //     });
+//     //     results.push({post,comments})
+//     // }
+//     //3
+//     const cursor = PostModel.find({isDeleted:false}).cursor();
+//     let results=[];
+//     for (let post = await cursor.next(); post != null; post = await cursor.next()) {
+//         const comments=await dbService.find({
+//                     model:CommentModel,
+//                     filter:{postId:post._id,isDeleted:false},
+//                     select:"image text -_id"
+//                 });
+//                 results.push({post,comments})
+//     }
+//     return res.status(200).json({success:true,data:{results}})
+// }
 export const activePosts=async(req,res,next)=>{
-    //1
-    // let posts;
-    // if(req.user.role===roleType.Admin)
-    // {
-    //     posts=await dbService.find({
-    //         model:PostModel,
-    //         filter:{isDeleted:false},
-    //         populate:{path:"createdBy",select:"userName image -_id"}
-    //     });
-    // }
-    // posts=await dbService.find({
-    //     model:PostModel,
-    //     filter:{isDeleted:false,createdBy:req.user._id},
-    //     populate:{path:"createdBy",select:"userName image -_id"}
-    // });
-    //2
-    // let posts;
-    // posts=await dbService.find({
-    //             model:PostModel,
-    //             filter:{isDeleted:false},
-    //             populate:{path:"createdBy",select:"userName image -_id"}
-    //         });
-    // let results=[];
-    // for (const post of posts) {
-    //     const comments=await dbService.find({
-    //         model:CommentModel,
-    //         filter:{postId:post._id,isDeleted:false},
-    //         select:"image text -_id"
-    //     });
-    //     results.push({post,comments})
-    // }
-    //3
-    const cursor = PostModel.find({isDeleted:false}).cursor();
-    let results=[];
-    for (let post = await cursor.next(); post != null; post = await cursor.next()) {
-        const comments=await dbService.find({
-                    model:CommentModel,
-                    filter:{postId:post._id,isDeleted:false},
-                    select:"image text -_id"
-                });
-                results.push({post,comments})
-    }
-    return res.status(200).json({success:true,data:{results}})
+    let { page = 1 } = req.query; // Default to page 1 if not provided
+
+    const results = await paginate(PostModel, { isDeleted: false }, page);
+
+    return res.status(200).json({ success: true, data: results });
 }
 export const freezedPosts=async(req,res,next)=>{
     let posts;

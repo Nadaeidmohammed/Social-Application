@@ -79,7 +79,6 @@ export const login=async(req,res,next)=>{
         refresh_token
     }});
 }
-/////////
 export const refresh_token=async(req,res,next)=>{
     const {authorization}=req.headers;
     const user =await decodedToken({
@@ -160,7 +159,7 @@ if(user?.providers===providersTypes.System)
      user=await dbService.create({
     model:UserModel,
     data:{
-    userName:name,
+    firstNamw:name,
     email,
     Image:picture,
     confirmEmail:email_verified,

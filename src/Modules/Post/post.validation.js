@@ -33,3 +33,9 @@ export const reactToPostSchema =joi.object({
     postId:generalField.id.required(),
     reactionType: joi.string().valid("like", "love", "haha", "wow", "sad", "angry").required(),
 }).required();
+
+
+export const likePostGraph =joi.object({
+    postId:generalField.id.required(),
+    authorization:joi.string().required()
+}).required();
