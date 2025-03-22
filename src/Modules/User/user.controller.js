@@ -64,4 +64,16 @@ router.delete("/deleteImageOnCloud",
     authentication(),
     asyncHandler(userService.deleteImageOnCloud)
 )
+//send friend request
+router.post("/friend-request/:friendId",
+    authentication(),
+    validation(userValidation.sendFriendRequestSchema),
+    asyncHandler(userService.sendFriendRequest)
+)
+//accept
+router.post("/friend-request/:friendId/accept",
+    authentication(),
+    validation(userValidation.acceptFriendRequestSchema),
+    asyncHandler(userService.acceptFriendRequest)
+)
 export default router;

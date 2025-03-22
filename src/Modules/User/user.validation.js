@@ -30,3 +30,12 @@ export const updateProfileSchema=joi.object({
    DOB:generalField.DOB,
    address:generalField.address,
 }).required();
+
+
+export const sendFriendRequestSchema=joi.object({
+    friendId:generalField.id.required(),
+}).required();
+
+export const acceptFriendRequestSchema=joi.object({
+    friendId:generalField.id.required(),
+}).required();

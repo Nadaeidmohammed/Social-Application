@@ -85,6 +85,8 @@ const userSchema=new Schema({
     forgetPasswordOTP:String,
     tempEmail:String,
     tempEmailOTP:String,
+    friendRequest:[{type:Types.ObjectId,ref:"User"}],
+    friends:[{type:Types.ObjectId,ref:"User"}]
 },{timestamps:true})
 
 userSchema.pre("save",function(next){

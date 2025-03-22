@@ -6,6 +6,7 @@ import { compareHash, hash } from "../../utils/hashing/hash.js";
 import cloudinary from "../../utils/file Uploading/cloudinaryConfig.js"
 import path from "path";
 import fs from "fs";
+import { areFriend, requestExists } from "./helpers/checkFriend.js";
 
 export const getProfile=async(req,res,next)=>{
     const user =await dbService.findOne({model:UserModel,filter:{_id:req.user._id},
@@ -212,4 +213,52 @@ export const deleteImageOnCloud=async(req,res,next)=>{
    }
    await user.save();
     return res.status(200).json({success:true,data:{user}})
+}
+export const sendFriendRequest=async(req,res,next)=>{
+
+    const {friendId}=req.params; //reciver
+    const user = req.user;       //sender
+    const friend=await dbService.findOne({
+        model:UserModel,
+        filter:{_id:friendId,isDeleted:false},
+    });
+    if(!friend)
+       return next(new Error("Friend Not Found",{cause:404}))
+
+    if (areFriend(friend, user)) {
+        return next(new Error("Already Friends", { cause: 400 }));
+    }
+
+    if (requestExists(friend, user)) {
+        return next(new Error("Friend request already sent", { cause: 400 }));
+    }
+
+    friend.friendRequest.push(user._id);
+    await friend.save();
+   
+    return res.status(200).json({success:true,message:"Done"})
+}
+export const acceptFriendRequest=async(req,res,next)=>{
+
+    const {friendId}=req.params; //sender
+    const user = req.user;       //reciver 
+    const friend=await dbService.findOne({
+        model:UserModel,
+        filter:{_id:friendId,isDeleted:false},
+    });
+    if(!friend)
+       return next(new Error("Friend Not Found",{cause:404}))
+
+    if(areFriend(friend,user))
+        return next(new Error("Already Friend"));
+    
+    friend.friends.push(user._id);
+    user.friends.push(friend._id);
+    
+    user.friendRequest=user.friendRequest.map(String)
+    .filter((id) => id != friend._id.toString())
+
+   await user.save();
+   await friend.save();
+    return res.status(200).json({success:true,message:"Done"})
 }
